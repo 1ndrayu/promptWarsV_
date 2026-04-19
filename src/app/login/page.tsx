@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { auth, googleProvider } from "@/lib/firebase";
 import { signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged } from "firebase/auth";
-import { ShieldCheck, Mail, Lock, Globe, ArrowRight } from "lucide-react";
+import { ShieldCheck, Mail, Lock, Globe } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -63,32 +63,28 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center p-6 font-sans">
-      <section className="w-full max-w-xl bg-white rounded-[56px] p-12 md:p-16 border border-gray-100 shadow-2xl relative overflow-hidden">
-        {/* Abstract Background Element */}
-        <div className="absolute -top-24 -right-24 h-64 w-64 bg-blue-50 rounded-full blur-3xl opacity-50" aria-hidden="true"></div>
+      <section className="w-full max-w-md bg-white rounded-2xl p-10 border border-gray-200 shadow-sm relative overflow-hidden">
         
         <div className="relative z-10">
-          <header className="flex items-center space-x-4 mb-16">
-            <div className="h-14 w-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-blue-100" aria-hidden="true">
-               <ShieldCheck size={32} />
+          <header className="flex flex-col items-center mb-8">
+            <div className="h-12 w-12 bg-blue-600 rounded-xl flex items-center justify-center text-white mb-4" aria-hidden="true">
+               <ShieldCheck size={24} />
             </div>
-            <div>
-              <h1 className="text-4xl font-black tracking-tighter text-gray-900 leading-none">NEXUS</h1>
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 mt-2">SECURE GATEWAY</p>
-            </div>
+            <h1 className="text-2xl font-medium text-gray-900 leading-none">NEXUS</h1>
+            <p className="text-sm font-medium text-gray-500 mt-2">Secure Gateway</p>
           </header>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-8" id="login-heading">Sign in to your account</h2>
+          <h2 className="text-xl font-medium text-gray-800 mb-6 text-center" id="login-heading">Sign in</h2>
 
-          <form onSubmit={handleEmailLogin} className="space-y-6" aria-labelledby="login-heading">
+          <form onSubmit={handleEmailLogin} className="space-y-4" aria-labelledby="login-heading">
             <div className="space-y-2">
               <div className="relative">
-                <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400" size={20} aria-hidden="true" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} aria-hidden="true" />
                 <input 
                   type="email" 
                   placeholder="Email Address" 
                   aria-label="Email Address"
-                  className="w-full bg-gray-50 border border-transparent px-16 py-5 rounded-3xl focus:bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all font-bold"
+                  className="w-full bg-white border border-gray-300 px-12 py-3 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all text-gray-900"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -97,65 +93,63 @@ export default function LoginPage() {
 
             <div className="space-y-2">
               <div className="relative">
-                <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400" size={20} aria-hidden="true" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} aria-hidden="true" />
                 <input 
                   type="password" 
                   placeholder="Password" 
                   aria-label="Password"
-                  className="w-full bg-gray-50 border border-transparent px-16 py-5 rounded-3xl focus:bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all font-bold"
+                  className="w-full bg-white border border-gray-300 px-12 py-3 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all text-gray-900"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
             </div>
 
-            {error && <p className="text-red-500 text-xs font-bold uppercase tracking-widest text-center" role="alert">{error}</p>}
+            {error && <p className="text-red-500 text-sm font-medium text-center" role="alert">{error}</p>}
 
             <button 
               type="submit" 
               disabled={loading}
               aria-label="Submit login"
-              className="w-full bg-blue-600 text-white font-black py-6 rounded-3xl shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all text-xl uppercase tracking-widest active:scale-95 disabled:opacity-50 focus:ring-4 focus:ring-blue-300"
+              className="w-full bg-blue-600 text-white font-medium py-3 rounded-md hover:bg-blue-700 transition-colors active:bg-blue-800 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              {loading ? "Authorizing..." : "Enter Portal"}
+              {loading ? "Authorizing..." : "Next"}
             </button>
           </form>
 
-          <div className="relative my-12 text-center">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-100"></div></div>
-            <span className="relative bg-white px-6 text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Identity Providers</span>
+          <div className="relative my-8 text-center">
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
+            <span className="relative bg-white px-4 text-sm font-medium text-gray-500">or</span>
           </div>
 
           <button 
             onClick={handleGoogleLogin}
             aria-label="Continue with Google"
-            className="w-full bg-white border border-gray-100 text-gray-900 font-bold py-5 rounded-3xl shadow-sm hover:bg-gray-50 transition-all flex items-center justify-center space-x-4 active:scale-95 focus:ring-4 focus:ring-gray-200"
+            className="w-full bg-white border border-gray-300 text-gray-700 font-medium py-3 rounded-md hover:bg-gray-50 transition-colors flex items-center justify-center space-x-3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200"
           >
-            <Globe size={24} className="text-blue-600" aria-hidden="true" />
-            <span className="uppercase tracking-widest text-xs">Continue with Google</span>
+            <Globe size={20} className="text-blue-600" aria-hidden="true" />
+            <span>Continue with Google</span>
           </button>
 
-          <nav className="mt-16 pt-8 border-t border-gray-50 flex flex-col items-center" aria-label="Developer Previews">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6" id="dev-preview-label">Developer Preview</p>
-            <div className="flex gap-4 w-full" aria-labelledby="dev-preview-label">
+          <nav className="mt-8 pt-6 border-t border-gray-100 flex flex-col items-center" aria-label="Developer Previews">
+            <p className="text-xs font-medium text-gray-500 mb-4" id="dev-preview-label">Developer Preview</p>
+            <div className="flex gap-3 w-full" aria-labelledby="dev-preview-label">
               <button 
                 onClick={() => {
                   localStorage.setItem("nexus_demo_uid", "nexus-vip");
                   router.push("/dashboard");
                 }}
                 aria-label="Preview Dashboard"
-                className="flex-1 bg-gray-900 text-white p-4 rounded-2xl flex items-center justify-center space-x-3 hover:bg-black transition-all active:scale-95 focus:ring-4 focus:ring-gray-400"
+                className="flex-1 bg-gray-100 text-gray-700 p-3 rounded-md flex items-center justify-center space-x-2 hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
               >
-                <span className="text-[10px] font-black uppercase tracking-widest">Dashboard Preview</span>
-                <ArrowRight size={16} aria-hidden="true" />
+                <span className="text-xs font-medium">Dashboard</span>
               </button>
               <button 
                 onClick={() => router.push("/manager")}
                 aria-label="Preview Manager Portal"
-                className="flex-1 bg-gray-50 text-gray-900 border border-gray-100 p-4 rounded-2xl flex items-center justify-center space-x-3 hover:bg-gray-100 transition-all active:scale-95 focus:ring-4 focus:ring-gray-200"
+                className="flex-1 bg-gray-100 text-gray-700 p-3 rounded-md flex items-center justify-center space-x-2 hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
               >
-                <span className="text-[10px] font-black uppercase tracking-widest">Manager Preview</span>
-                <ArrowRight size={16} aria-hidden="true" />
+                <span className="text-xs font-medium">Manager</span>
               </button>
             </div>
           </nav>

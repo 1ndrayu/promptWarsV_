@@ -7,7 +7,6 @@ import { collection, onSnapshot, doc, updateDoc, setDoc, getDoc, DocumentData } 
 import { onAuthStateChanged } from "firebase/auth";
 import { generateHexCode, decryptQRPayload } from "@/lib/logic";
 import { Html5Qrcode } from "html5-qrcode";
-import { motion, AnimatePresence } from "framer-motion";
 import { 
   X, Camera, User as UserIcon, Plus, 
   Upload, Search, CheckCircle2, AlertCircle, ShieldCheck
@@ -153,20 +152,20 @@ export default function ManagerPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
       {/* Sidebar - Shared Design with Dashboard */}
-      <div className="md:fixed left-0 top-0 h-auto md:h-full w-full md:w-80 lg:w-96 bg-white border-b md:border-b-0 md:border-r border-gray-200 flex flex-col z-30 shadow-xl md:shadow-none">
-        <div className="p-8 border-b border-gray-50 flex justify-between items-center">
+      <div className="md:fixed left-0 top-0 h-auto md:h-full w-full md:w-72 lg:w-80 bg-white border-b md:border-b-0 md:border-r border-gray-200 flex flex-col z-30 shadow-sm md:shadow-none">
+        <div className="p-6 border-b border-gray-200 flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <div className="h-10 w-10 bg-blue-600 text-white rounded-xl flex items-center justify-center shadow-lg shadow-blue-100">
+            <div className="h-10 w-10 bg-blue-600 text-white rounded-xl flex items-center justify-center">
                <NexusLogo />
             </div>
             <div>
-              <h1 className="text-2xl font-black tracking-tighter text-gray-900 leading-none">NEXUS</h1>
-              <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-gray-400 mt-1">MANAGER COMMAND</p>
+              <h1 className="text-xl font-semibold text-gray-900 leading-none">NEXUS</h1>
+              <p className="text-xs font-medium text-gray-500 mt-1">Manager Command</p>
             </div>
           </div>
           <button 
             onClick={() => setIsAdding(true)}
-            className="h-10 w-10 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition-all flex items-center justify-center active:scale-95"
+            className="h-10 w-10 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center"
           >
             <Plus size={20} />
           </button>
@@ -180,77 +179,76 @@ export default function ManagerPage() {
               placeholder="Search attendees..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-50 border border-transparent rounded-2xl py-3 pl-12 pr-4 text-sm font-medium focus:bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all"
+              className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 pl-11 pr-4 text-sm font-medium focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
             />
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 pb-8 space-y-2 max-h-[300px] md:max-h-full">
+        <div className="flex-1 overflow-y-auto px-4 pb-6 space-y-2 max-h-[300px] md:max-h-full">
           {filteredAttendees.map(attendee => (
-            <motion.div 
+            <div 
               key={attendee.id}
-              whileHover={{ x: 4 }}
               onClick={() => setSelectedAttendeeId(attendee.id)}
-              className={`p-4 rounded-2xl cursor-pointer transition-all flex items-center justify-between border-2 ${selectedAttendeeId === attendee.id ? 'bg-blue-600 border-blue-600 text-white shadow-lg' : 'bg-white border-transparent hover:border-blue-100'}`}
+              className={`p-3 rounded-lg cursor-pointer transition-colors flex items-center justify-between border ${selectedAttendeeId === attendee.id ? 'bg-blue-50 border-blue-200' : 'bg-white border-transparent hover:bg-gray-50 hover:border-gray-200'}`}
             >
-              <div className="flex items-center space-x-4">
-                <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${selectedAttendeeId === attendee.id ? 'bg-white/20' : 'bg-blue-50 text-blue-600'}`}>
+              <div className="flex items-center space-x-3">
+                <div className={`h-10 w-10 rounded-full flex items-center justify-center ${selectedAttendeeId === attendee.id ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500'}`}>
                   <UserIcon size={18} />
                 </div>
                 <div className="overflow-hidden">
-                  <p className="font-bold text-sm leading-tight truncate">{attendee.name || attendee.email}</p>
-                  <p className={`text-[10px] font-bold uppercase tracking-widest leading-none mt-1 ${selectedAttendeeId === attendee.id ? 'text-white/70' : 'text-gray-400'}`}>{attendee.tier}</p>
+                  <p className="font-medium text-sm text-gray-900 leading-tight truncate">{attendee.name || attendee.email}</p>
+                  <p className={`text-xs mt-0.5 ${selectedAttendeeId === attendee.id ? 'text-blue-600' : 'text-gray-500'}`}>{attendee.tier}</p>
                 </div>
               </div>
-              <p className={`font-mono text-[10px] font-bold ${selectedAttendeeId === attendee.id ? 'text-white/50' : 'text-gray-300'}`}>{generateHexCode(attendee.id)}</p>
-            </motion.div>
+              <p className={`font-mono text-xs ${selectedAttendeeId === attendee.id ? 'text-blue-400' : 'text-gray-400'}`}>{generateHexCode(attendee.id)}</p>
+            </div>
           ))}
           {filteredAttendees.length === 0 && (
-            <div className="text-center py-20 px-8">
-              <div className="h-24 w-24 bg-blue-50 text-blue-600 rounded-[32px] flex items-center justify-center mx-auto mb-8 shadow-inner animate-pulse">
-                <ShieldCheck size={48} />
+            <div className="text-center py-16 px-6">
+              <div className="h-16 w-16 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                <ShieldCheck size={32} />
               </div>
-              <h3 className="text-2xl font-black uppercase tracking-tighter text-gray-900 mb-2">No Attendees Found</h3>
-              <p className="text-sm font-medium text-gray-400 mb-12 max-w-[240px] mx-auto leading-relaxed">The database is currently empty or not yet synchronized.</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-1">No Attendees</h3>
+              <p className="text-sm text-gray-500 mb-6 leading-relaxed">Database is empty or syncing.</p>
               <button 
                 onClick={seedData}
-                className="bg-blue-600 text-white font-black px-10 py-4 rounded-2xl shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all active:scale-95 uppercase tracking-widest text-xs"
+                className="bg-white border border-gray-300 text-gray-700 font-medium px-6 py-2 rounded-lg shadow-sm hover:bg-gray-50 transition-colors text-sm"
               >
-                Initialize Nexus Data
+                Initialize Data
               </button>
             </div>
           )}
         </div>
 
-        <div className="p-6 border-t border-gray-50">
+        <div className="p-4 border-t border-gray-200">
            <button 
              onClick={async () => { await auth.signOut(); router.push("/"); }}
-             className="w-full flex items-center justify-center space-x-3 bg-red-50 text-red-600 font-bold py-4 rounded-2xl hover:bg-red-100 transition-all active:scale-95"
+             className="w-full flex items-center justify-center space-x-2 bg-white border border-gray-300 text-gray-700 font-medium py-2.5 rounded-lg hover:bg-gray-50 transition-colors"
            >
               <X size={18} />
-              <span className="text-xs uppercase tracking-widest">Exit Command Portal</span>
+              <span className="text-sm">Exit Manager</span>
            </button>
         </div>
       </div>
 
       {/* Main Area */}
-      <div className="md:ml-80 lg:ml-96 p-6 md:p-12 lg:p-16 min-h-screen">
-        <div className="max-w-4xl mx-auto space-y-12">
+      <div className="md:ml-72 lg:ml-80 p-6 md:p-10 min-h-screen">
+        <div className="max-w-4xl mx-auto space-y-8">
           
           {/* Action Hub */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <ScanCard 
               onClick={startScanner} 
-              icon={<Camera size={32} />} 
+              icon={<Camera size={24} />} 
               title="Live Camera Scan" 
-              description="Open universal identity lens"
+              description="Scan an attendee's QR code"
               color="bg-blue-600"
             />
             <label className="cursor-pointer group">
               <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} />
               <ScanCard 
                 asLabel
-                icon={<Upload size={32} />} 
+                icon={<Upload size={24} />} 
                 title="Photo Upload Scan" 
                 description="Process saved QR images"
                 color="bg-purple-600"
@@ -259,190 +257,175 @@ export default function ManagerPage() {
           </div>
 
           {/* Verification Engine */}
-          <AnimatePresence>
-            {scanResult && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className={`p-10 rounded-[48px] border-4 flex flex-col md:flex-row items-center gap-8 ${scanResult.status === 'granted' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}
+          {scanResult && (
+            <div 
+              className={`p-8 rounded-2xl border flex flex-col md:flex-row items-center gap-6 ${scanResult.status === 'granted' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}
+            >
+              <div className={`h-16 w-16 rounded-full flex items-center justify-center ${scanResult.status === 'granted' ? 'bg-green-600' : 'bg-red-600'} text-white shadow-sm`}>
+                {scanResult.status === 'granted' ? <CheckCircle2 size={32} /> : <AlertCircle size={32} />}
+              </div>
+              <div className="text-center md:text-left flex-1">
+                <h2 className={`text-2xl font-bold mb-1 ${scanResult.status === 'granted' ? 'text-green-900' : 'text-red-900'}`}>
+                  {scanResult.status === 'granted' ? 'Verified' : 'Rejected'}
+                </h2>
+                <p className="text-base font-medium opacity-80 mb-3">{scanResult.message}</p>
+                {scanResult.data && (
+                  <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                    <span className="bg-white px-3 py-1 rounded-md text-xs font-medium border border-gray-200">{scanResult.data.name}</span>
+                    <span className="bg-white px-3 py-1 rounded-md text-xs font-medium border border-green-200 text-green-700">{scanResult.data.tier}</span>
+                  </div>
+                )}
+              </div>
+              <button 
+                onClick={() => setScanResult(null)}
+                className="bg-white border border-gray-300 text-gray-700 px-6 py-2 rounded-lg font-medium shadow-sm hover:bg-gray-50 transition-colors"
               >
-                <div className={`h-24 w-24 rounded-[32px] flex items-center justify-center ${scanResult.status === 'granted' ? 'bg-green-600' : 'bg-red-600'} text-white shadow-xl`}>
-                  {scanResult.status === 'granted' ? <CheckCircle2 size={48} /> : <AlertCircle size={48} />}
-                </div>
-                <div className="text-center md:text-left flex-1">
-                  <h2 className={`text-5xl font-black uppercase tracking-tighter leading-none mb-2 ${scanResult.status === 'granted' ? 'text-green-900' : 'text-red-900'}`}>
-                    {scanResult.status === 'granted' ? 'Verified' : 'Rejected'}
-                  </h2>
-                  <p className="text-lg font-bold opacity-70 mb-4 tracking-tight">{scanResult.message}</p>
-                  {scanResult.data && (
-                    <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                      <span className="bg-white px-4 py-1 rounded-full text-[10px] font-bold uppercase border border-gray-100">{scanResult.data.name}</span>
-                      <span className="bg-white px-4 py-1 rounded-full text-[10px] font-bold uppercase border border-green-200 text-green-700">{scanResult.data.tier}</span>
-                    </div>
-                  )}
-                </div>
-                <button 
-                  onClick={() => setScanResult(null)}
-                  className="bg-white text-gray-900 px-10 py-4 rounded-2xl font-bold uppercase tracking-widest shadow-sm hover:shadow-md transition-all active:scale-95"
-                >
-                  Clear
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                Clear
+              </button>
+            </div>
+          )}
 
           {/* Detailed Attendee Profile */}
-          <AnimatePresence>
-            {selectedAttendee && (
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-[56px] border border-gray-100 p-12 shadow-2xl relative"
-              >
-                <button onClick={() => setSelectedAttendeeId(null)} className="absolute top-8 right-8 h-12 w-12 rounded-full hover:bg-gray-50 flex items-center justify-center transition-colors">
-                  <X size={24} />
-                </button>
+          {selectedAttendee && (
+            <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm relative">
+              <button onClick={() => setSelectedAttendeeId(null)} className="absolute top-6 right-6 h-10 w-10 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors text-gray-500">
+                <X size={20} />
+              </button>
 
-                <div className="flex flex-col md:flex-row items-center md:items-start gap-12 mb-16">
-                  <div className="h-32 w-32 bg-blue-50 text-blue-600 rounded-[40px] flex items-center justify-center shadow-inner">
-                    <UserIcon size={64} />
-                  </div>
-                  <div className="text-center md:text-left pt-4">
-                    <h2 className="text-6xl font-black tracking-tighter leading-none mb-4">{selectedAttendee.name || "Attendee"}</h2>
-                    <p className="text-xl font-medium text-gray-400 mb-8 tracking-tight">{selectedAttendee.email}</p>
-                    <div className="flex justify-center md:justify-start gap-4">
-                      <span className="px-8 py-3 bg-gray-900 text-white rounded-full text-xs font-bold uppercase tracking-[0.2em]">{selectedAttendee.tier}</span>
-                      <span className="px-8 py-3 bg-blue-50 text-blue-600 border border-blue-100 rounded-full text-xs font-mono font-bold tracking-[0.2em]">{generateHexCode(selectedAttendee.id)}</span>
-                    </div>
+              <div className="flex flex-col md:flex-row items-center md:items-start gap-8 mb-10">
+                <div className="h-24 w-24 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shadow-sm">
+                  <UserIcon size={40} />
+                </div>
+                <div className="text-center md:text-left pt-2">
+                  <h2 className="text-3xl font-semibold text-gray-900 mb-2">{selectedAttendee.name || "Attendee"}</h2>
+                  <p className="text-base text-gray-500 mb-4">{selectedAttendee.email}</p>
+                  <div className="flex justify-center md:justify-start gap-3">
+                    <span className="px-4 py-1.5 bg-gray-100 text-gray-800 rounded-md text-sm font-medium">{selectedAttendee.tier}</span>
+                    <span className="px-4 py-1.5 bg-blue-50 text-blue-700 border border-blue-100 rounded-md text-sm font-mono">{generateHexCode(selectedAttendee.id)}</span>
                   </div>
                 </div>
+              </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 pt-12 border-t border-gray-50">
-                  <div className="space-y-6">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 mb-8">Access Control</h3>
-                    {['wifi', 'lounge', 'backstage', 'premiumDining'].map(key => {
-                      const isActive = selectedAttendee.entitlements?.[key] || false;
-                      return (
-                        <div key={key} className="flex justify-between items-center p-5 bg-gray-50 rounded-3xl border border-gray-100 group hover:border-blue-200 transition-colors">
-                          <span className="font-bold uppercase tracking-widest text-xs text-gray-500">{key} Access</span>
-                          <button 
-                            onClick={async () => {
-                              await updateDoc(doc(db, "users", selectedAttendee.id), { [`entitlements.${key}`]: !isActive });
-                            }}
-                            className={`w-16 h-9 rounded-full transition-all relative ${isActive ? 'bg-blue-600' : 'bg-gray-300'}`}
-                          >
-                            <motion.div 
-                              animate={{ x: isActive ? 28 : 0 }}
-                              className="h-7 w-7 bg-white rounded-full absolute top-1 left-1 shadow-md"
-                            />
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  
-                  <div className="bg-gray-50 rounded-[48px] p-10 flex flex-col items-center justify-center text-center space-y-6 border-4 border-dashed border-gray-200">
-                     <div className="h-16 w-16 bg-white rounded-2xl flex items-center justify-center text-blue-600 shadow-sm">
-                        <ShieldCheck size={32} />
-                     </div>
-                     <p className="text-xs font-bold uppercase tracking-widest text-gray-400 max-w-[200px]">Live Real-Time Verification Active</p>
-                     <div className="h-1 w-12 bg-blue-200 rounded-full"></div>
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-gray-200">
+                <div className="space-y-4">
+                  <h3 className="text-sm font-medium text-gray-700 mb-4">Access Control</h3>
+                  {['wifi', 'lounge', 'backstage', 'premiumDining'].map(key => {
+                    const isActive = selectedAttendee.entitlements?.[key] || false;
+                    return (
+                      <div key={key} className="flex justify-between items-center p-4 bg-gray-50 rounded-xl border border-gray-200 hover:border-gray-300 transition-colors">
+                        <span className="font-medium text-sm text-gray-700 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()} Access</span>
+                        <button 
+                          onClick={async () => {
+                            await updateDoc(doc(db, "users", selectedAttendee.id), { [`entitlements.${key}`]: !isActive });
+                          }}
+                          className={`w-12 h-6 rounded-full transition-colors relative ${isActive ? 'bg-blue-600' : 'bg-gray-300'}`}
+                        >
+                          <div 
+                            className={`h-5 w-5 bg-white rounded-full absolute top-0.5 shadow-sm transition-transform ${isActive ? 'translate-x-6 left-0.5' : 'translate-x-0.5'}`}
+                          />
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                
+                <div className="bg-blue-50 rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-4 border border-blue-100">
+                   <div className="h-12 w-12 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm">
+                      <ShieldCheck size={24} />
+                   </div>
+                   <p className="text-sm font-medium text-blue-800 max-w-[200px]">Live Real-Time Verification Active</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Register Attendee Modal */}
-      <AnimatePresence>
-        {isAdding && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-gray-900/60 backdrop-blur-md" onClick={() => setIsAdding(false)} />
-            <motion.div 
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-white w-full max-w-lg rounded-[56px] p-12 relative z-10 shadow-2xl"
-            >
-              <h2 className="text-4xl font-black uppercase tracking-tighter mb-12">New Attendee</h2>
-              <form onSubmit={handleCreateAttendee} className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Full Name</label>
-                  <input type="text" className="w-full bg-gray-50 px-8 py-5 rounded-3xl border-none focus:ring-4 focus:ring-blue-100 outline-none font-bold" required value={newAttendee.name} onChange={(e) => setNewAttendee({...newAttendee, name: e.target.value})} />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Email Address</label>
-                  <input type="email" className="w-full bg-gray-50 px-8 py-5 rounded-3xl border-none focus:ring-4 focus:ring-blue-100 outline-none font-bold" required value={newAttendee.email} onChange={(e) => setNewAttendee({...newAttendee, email: e.target.value})} />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Access Tier</label>
-                  <select className="w-full bg-gray-50 px-8 py-5 rounded-3xl border-none focus:ring-4 focus:ring-blue-100 outline-none font-bold appearance-none" value={newAttendee.tier} onChange={(e) => setNewAttendee({...newAttendee, tier: e.target.value})}>
-                    <option value="Guest">Guest</option>
-                    <option value="VIP">VIP</option>
-                    <option value="Lecturer">Lecturer</option>
-                    <option value="Staff">Staff</option>
-                  </select>
-                </div>
-                <button type="submit" className="w-full bg-blue-600 text-white font-black py-6 rounded-3xl shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all text-xl uppercase tracking-widest active:scale-95">
+      {isAdding && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setIsAdding(false)} />
+          <div className="bg-white w-full max-w-lg rounded-2xl p-8 relative z-10 shadow-xl border border-gray-200">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-gray-900">New Attendee</h2>
+              <button onClick={() => setIsAdding(false)} className="text-gray-400 hover:text-gray-600">
+                <X size={20} />
+              </button>
+            </div>
+            <form onSubmit={handleCreateAttendee} className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-sm font-medium text-gray-700">Full Name</label>
+                <input type="text" className="w-full bg-white border border-gray-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-900" required value={newAttendee.name} onChange={(e) => setNewAttendee({...newAttendee, name: e.target.value})} />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium text-gray-700">Email Address</label>
+                <input type="email" className="w-full bg-white border border-gray-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-900" required value={newAttendee.email} onChange={(e) => setNewAttendee({...newAttendee, email: e.target.value})} />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium text-gray-700">Access Tier</label>
+                <select className="w-full bg-white border border-gray-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-900" value={newAttendee.tier} onChange={(e) => setNewAttendee({...newAttendee, tier: e.target.value})}>
+                  <option value="Guest">Guest</option>
+                  <option value="VIP">VIP</option>
+                  <option value="Lecturer">Lecturer</option>
+                  <option value="Staff">Staff</option>
+                </select>
+              </div>
+              <div className="pt-4">
+                <button type="submit" className="w-full bg-blue-600 text-white font-medium py-3 rounded-lg hover:bg-blue-700 transition-colors">
                   Confirm Registration
                 </button>
-              </form>
-            </motion.div>
+              </div>
+            </form>
           </div>
-        )}
-      </AnimatePresence>
+        </div>
+      )}
 
       {/* Universal Scanner Overlay */}
-      <AnimatePresence>
-        {isScanning && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95 backdrop-blur-2xl" />
-             <div className="relative z-10 w-full max-w-2xl flex flex-col items-center">
-                <div className="mb-12 text-center">
-                   <h2 className="text-white text-4xl font-black uppercase tracking-tighter mb-2">Nexus Lens</h2>
-                   <p className="text-white/40 font-bold uppercase tracking-widest text-xs">Awaiting Cryptographic Token</p>
-                </div>
-                <div id="reader" className="w-full rounded-[64px] overflow-hidden border-[12px] border-white/10 bg-black aspect-square shadow-2xl relative">
-                   <div className="absolute inset-0 border-4 border-blue-500/50 rounded-[52px] animate-pulse z-10 pointer-events-none"></div>
-                </div>
-                <div id="file-reader" className="hidden"></div>
-                <button 
-                  onClick={async () => {
-                    if (scannerRef.current) {
-                      await scannerRef.current.stop();
-                      scannerRef.current.clear();
-                    }
-                    setIsScanning(false);
-                  }}
-                  className="mt-16 bg-white text-black px-16 py-5 rounded-full font-black uppercase tracking-[0.2em] shadow-2xl active:scale-95 transition-all"
-                >
-                  Terminate Scan
-                </button>
-             </div>
-          </div>
-        )}
-      </AnimatePresence>
+      {isScanning && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+           <div className="relative z-10 w-full max-w-lg flex flex-col items-center">
+              <div className="mb-8 text-center">
+                 <h2 className="text-white text-2xl font-semibold mb-2">Nexus Lens</h2>
+                 <p className="text-white/70 text-sm">Awaiting Code</p>
+              </div>
+              <div id="reader" className="w-full rounded-2xl overflow-hidden bg-black aspect-square relative border border-white/20">
+              </div>
+              <div id="file-reader" className="hidden"></div>
+              <button 
+                onClick={async () => {
+                  if (scannerRef.current) {
+                    await scannerRef.current.stop();
+                    scannerRef.current.clear();
+                  }
+                  setIsScanning(false);
+                }}
+                className="mt-8 bg-white text-gray-900 px-8 py-3 rounded-full font-medium hover:bg-gray-100 transition-colors"
+              >
+                Terminate Scan
+              </button>
+           </div>
+        </div>
+      )}
     </div>
   );
 }
 
 function ScanCard({ onClick, icon, title, description, color, asLabel = false }: { onClick?: () => void | Promise<void>, icon: React.ReactNode, title: string, description: string, color: string, asLabel?: boolean }) {
   const content = (
-    <div className="bg-white p-10 rounded-[56px] border border-gray-100 shadow-sm hover:shadow-xl transition-all group flex flex-col items-start text-left h-full">
-      <div className={`h-20 w-20 ${color} rounded-[32px] flex items-center justify-center text-white shadow-lg mb-10 group-hover:scale-110 transition-transform`}>
+    <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow flex flex-col items-start text-left h-full">
+      <div className={`h-14 w-14 ${color} rounded-xl flex items-center justify-center text-white mb-6`}>
         {icon}
       </div>
-      <h3 className="text-3xl font-black tracking-tight mb-2 uppercase">{title}</h3>
-      <p className="text-sm font-medium text-gray-400 mb-8">{description}</p>
-      <div className={`mt-auto flex items-center space-x-2 font-bold uppercase tracking-widest text-[10px] ${color.replace('bg-', 'text-')}`}>
-        <span>Activate Unit</span>
-        <ShieldCheck size={14} />
+      <h3 className="text-lg font-medium text-gray-900 mb-1">{title}</h3>
+      <p className="text-sm text-gray-500 mb-6">{description}</p>
+      <div className={`mt-auto flex items-center space-x-2 text-sm font-medium ${color.replace('bg-', 'text-')}`}>
+        <span>Activate</span>
+        <ShieldCheck size={16} />
       </div>
     </div>
   );
 
   if (asLabel) return <div className="h-full">{content}</div>;
-  return <button onClick={onClick} className="h-full active:scale-[0.98] transition-transform">{content}</button>;
+  return <button onClick={onClick} className="h-full text-left">{content}</button>;
 }
