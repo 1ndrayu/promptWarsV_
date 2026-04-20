@@ -1,9 +1,4 @@
-export type Entitlements = {
-  wifi: boolean;
-  lounge: boolean;
-  backstage: boolean;
-  premiumDining: boolean;
-};
+export type Entitlements = Record<string, boolean>;
 
 /**
  * Hex-code generation — first 6 chars of UID, uppercased.
@@ -13,35 +8,11 @@ export function generateHexCode(uid: string): string {
   return uid.substring(0, 6).toUpperCase();
 }
 
-/* ────────────────────── Bitmask helpers ────────────────────── */
-
-export function entitlementsToBitmask(entitlements: Entitlements): number {
-  let bitmask = 0;
-  if (entitlements.wifi) bitmask |= 1 << 0;
-  if (entitlements.lounge) bitmask |= 1 << 1;
-  if (entitlements.backstage) bitmask |= 1 << 2;
-  if (entitlements.premiumDining) bitmask |= 1 << 3;
-  return bitmask;
-}
-
-export function bitmaskToEntitlements(bitmask: number): Entitlements {
-  return {
-    wifi: (bitmask & (1 << 0)) !== 0,
-    lounge: (bitmask & (1 << 1)) !== 0,
-    backstage: (bitmask & (1 << 2)) !== 0,
-    premiumDining: (bitmask & (1 << 3)) !== 0,
-  };
-}
-
 /* ────────────────── QR payload (browser-safe) ────────────────── */
 
 /**
  * Build a signed QR payload using the Web Crypto–compatible
- * approach: base-64 encode { uid, bitmask, timestamp, hmac }.
- *
- * The HMAC uses a simple XOR-rotate derivation so it runs
- * anywhere without Node `crypto`.  For production swap in
- * SubtleCrypto or a server-side signer.
+ * approach: base-64 encode { uid, entitlements, timestamp, hmac }.
  */
 function simpleHmac(message: string, key: string): string {
   let hash = 0;
@@ -59,17 +30,17 @@ const SECRET = "nexus-secret-2026";                 // env-inject in prod
 export function encryptQRPayload(
   uid: string,
   entitlements: Entitlements,
+  eventId: string = "default"
 ): string {
   const timestamp = Date.now();
-  const bitmask = entitlementsToBitmask(entitlements);
-  const payload = JSON.stringify({ u: uid, b: bitmask, t: timestamp });
+  const payload = JSON.stringify({ u: uid, e: entitlements, t: timestamp, ev: eventId });
   const sig = simpleHmac(payload, SECRET);
   return btoa(`${payload}|${sig}`);
 }
 
 export function decryptQRPayload(
   encoded: string,
-): { uid: string; entitlements: Entitlements; timestamp: number } | null {
+): { uid: string; entitlements: Entitlements; timestamp: number; eventId: string } | null {
   try {
     const decoded = atob(encoded);
     const pipeIdx = decoded.lastIndexOf("|");
@@ -93,8 +64,9 @@ export function decryptQRPayload(
 
     return {
       uid: data.u,
-      entitlements: bitmaskToEntitlements(data.b),
+      entitlements: data.e,
       timestamp: data.t,
+      eventId: data.ev || "default"
     };
   } catch {
     console.error("Failed to decrypt QR payload");
