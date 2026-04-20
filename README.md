@@ -75,4 +75,3 @@ This project is configured for **Google Cloud Run**. It includes a CI/CD pipelin
 - **Mock Fallback**: Safe build-time pre-rendering even when environment variables are restricted.
 
 ---
-Created by [Antigravity](https://google.com) for Nexus Event Management.
